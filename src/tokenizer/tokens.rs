@@ -10,13 +10,14 @@ pub enum Token {
     Integer(i64),
     Float(f64),
     Punctuation(char),
+    Whitespace(char),
 }
 
 #[derive(Debug)]
 pub struct PositionedToken {
-    start: usize,
-    end: usize,
-    token: Token,
+    pub start: usize,
+    pub end: usize,
+    pub token: Token,
 }
 impl PositionedToken {
     pub fn new(start: usize, end: usize, token: Token) -> Self {

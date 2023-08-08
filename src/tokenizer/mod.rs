@@ -1,28 +1,48 @@
-use self::tokens::{PositionedToken, Token};
+use self::{
+    capturer::{capture_until, Capture},
+    tokens::{PositionedToken, Token},
+};
 
+pub mod capturer;
 pub mod tokens;
 const SINGLE_CHAR_TOKENS: [char; 4] = ['=', '[', ']', '.'];
-pub fn tokenize(toml: &str) -> Result<Vec<PositionedToken>, ()> {
-    let bytes = toml.as_bytes();
+pub type Tokens = Vec<PositionedToken>;
+// TODO: Implement `capture_until`, with an enum representing what to stop capturing at
+
+pub fn tokenize(toml: &str) -> Result<Tokens, ()> {
+    let bytes: &[u8] = toml.as_bytes();
     let mut i = 0;
-    let mut tokens: Vec<PositionedToken> = vec![];
+    let mut tokens: Tokens = vec![];
     let len = bytes.len();
     while i < len {
         let char = bytes[i] as char;
         // Start of string
         if char == '"' {
             let start_i = i;
-            let mut str = String::from("");
-            // Capture all until next '"'
+            let captured = capture_until(bytes, &mut i, Capture::Char('"'));
+            tokens.push(PositionedToken::new(start_i, i, Token::StringLit(captured)))
+        }
+        if char.is_numeric() {
+            let start_i = i;
+            // Capture until whitespace or single char token
+            let mut chars = String::from("");
+            let mut floating_point = false;
             loop {
-                i += 1;
                 let inside_char = bytes[i] as char;
-                if inside_char == '"' {
+                if inside_char == '.' {
+                    floating_point = true;
+                } else if inside_char.is_whitespace() || SINGLE_CHAR_TOKENS.contains(&inside_char) {
                     break;
                 }
-                str.push(inside_char);
+                chars.push(inside_char);
+                i += 1;
             }
-            tokens.push(PositionedToken::new(start_i, i, Token::StringLit(str)))
+            let token = if floating_point {
+                Token::Float(chars.parse().unwrap())
+            } else {
+                Token::Integer(chars.parse().unwrap())
+            };
+            tokens.push(PositionedToken::new(start_i, i, token))
         }
         // Identifier
         if char.is_alphabetic() {
@@ -42,19 +62,14 @@ pub fn tokenize(toml: &str) -> Result<Vec<PositionedToken>, ()> {
         if char == '#' {
             let start_i = i;
             // Capture rest of line as a comment
-            let mut comment = String::from("");
-            loop {
-                i += 1;
-                let inside_char = bytes[i] as char;
-                if inside_char == '\n' {
-                    break;
-                }
-                comment.push(inside_char);
-            }
+            let comment = capture_until(bytes, &mut i, Capture::Char('\n'));
             tokens.push(PositionedToken::new(start_i, i, Token::Comment(comment)))
         }
         if SINGLE_CHAR_TOKENS.contains(&char) {
             tokens.push(PositionedToken::new(i, i, Token::Punctuation(char)))
+        }
+        if char.is_whitespace() {
+            tokens.push(PositionedToken::new(i, i, Token::Whitespace(char)))
         }
         i += 1;
     }
