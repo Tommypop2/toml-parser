@@ -1,6 +1,6 @@
 use crate::{
     parser::{
-        exprs::{Node, Pair},
+        exprs::{Node, Pair, Table},
         AST,
     },
     tokenizer::tokens::Lit,
@@ -25,18 +25,26 @@ fn generate_array(arr: Vec<Lit>) -> String {
     str += "]";
     str
 }
+fn generate_table(table: Table) -> String {
+    let header = format!("[{}]", table.ident);
+    let mut contents = String::from("");
+    for child in table.children {
+        contents += &generate_node(child);
+    }
+    header + &contents
+}
 pub fn generate_node(node: Node) -> String {
     match node {
         Node::Lit(l) => generate_lit(&l),
-        Node::Pair(p) => generate_pair(p),
-        Node::Array(a) => generate_array(a),
-        _ => "".into(),
+        Node::Pair(p) => generate_pair(p) + "\n",
+        Node::Array(a) => generate_array(a) + "\n",
+        Node::Table(t) => generate_table(t) + "\n",
     }
 }
 pub fn generate(nodes: AST) -> String {
     let mut str = String::from("");
     for node in nodes {
-        str += &(generate_node(node) + "\n")
+        str += &generate_node(node);
     }
     str
 }

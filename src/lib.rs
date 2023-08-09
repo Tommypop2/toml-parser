@@ -15,6 +15,7 @@ fn remove_whitespace(tokens: &mut Tokens) {
 pub fn run(toml: &str) -> Result<AST, ()> {
     let mut tokens = tokenize(toml).unwrap();
     remove_whitespace(&mut tokens);
+    dbg!(&tokens);
     let res = parse(tokens);
     res
 }

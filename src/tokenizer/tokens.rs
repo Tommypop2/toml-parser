@@ -8,7 +8,7 @@ pub enum Lit {
     Integer(i64),
     Float(f64),
 }
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     Comment(String),
     Ident(String),
@@ -17,7 +17,7 @@ pub enum Token {
     Whitespace(char),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PositionedToken {
     pub start: usize,
     pub end: usize,

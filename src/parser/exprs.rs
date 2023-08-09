@@ -16,11 +16,11 @@ impl Pair {
 #[derive(Debug)]
 pub struct Table {
     pub ident: String,
-    pub pairs: Vec<Pair>,
+    pub children: Vec<Node>,
 }
 impl Table {
-    pub fn new(ident: String, pairs: Vec<Pair>) -> Self {
-        Self { ident, pairs }
+    pub fn new(ident: String, children: Vec<Node>) -> Self {
+        Self { ident, children }
     }
 }
 #[derive(Debug)]
