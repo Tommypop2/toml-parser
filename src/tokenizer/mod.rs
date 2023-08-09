@@ -7,7 +7,6 @@ pub mod capturer;
 pub mod tokens;
 const SINGLE_CHAR_TOKENS: [char; 5] = ['=', '[', ']', '.', ','];
 pub type Tokens = Vec<PositionedToken>;
-// TODO: Implement `capture_until`, with an enum representing what to stop capturing at
 
 pub fn tokenize(toml: &str) -> Result<Tokens, ()> {
     let bytes: &[u8] = toml.as_bytes();
