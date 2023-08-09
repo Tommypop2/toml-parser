@@ -1,6 +1,9 @@
 pub enum Capture {
     Char(char),
 }
+/**
+ * Doesn't include the current, or final char
+ */
 pub fn capture_until(bytes: &[u8], i: &mut usize, stop: Capture) -> String {
     let mut chars = String::from("");
     loop {
@@ -13,5 +16,5 @@ pub fn capture_until(bytes: &[u8], i: &mut usize, stop: Capture) -> String {
         }
         chars.push(inside_char);
     }
-    return chars;
+    chars
 }
