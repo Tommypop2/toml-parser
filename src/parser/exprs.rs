@@ -6,10 +6,10 @@ pub struct Pair {
     pub value: Box<Node>,
 }
 impl Pair {
-    pub fn new(key: String, value: Lit) -> Self {
+    pub fn new(key: String, value: Node) -> Self {
         Self {
             key,
-            value: Box::new(Node::Lit(value)),
+            value: Box::new(value),
         }
     }
 }
@@ -26,6 +26,7 @@ impl Table {
 #[derive(Debug)]
 pub enum Node {
     Pair(Pair),
+    Array(Vec<Lit>),
     Lit(Lit),
     Table(Table),
 }

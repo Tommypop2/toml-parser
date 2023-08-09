@@ -2,13 +2,13 @@
 // pub struct Comment {
 //     content: String,
 // }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Lit {
     StringLit(String),
     Integer(i64),
     Float(f64),
 }
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Token {
     Comment(String),
     Ident(String),
