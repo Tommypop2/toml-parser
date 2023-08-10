@@ -31,6 +31,9 @@ pub type AST = Vec<Node>;
 pub fn parse(tokens: Vec<PositionedToken>) -> Result<AST, ()> {
     let mut nodes: AST = vec![];
     let mut i = 0;
+    if tokens.len() == 0 {
+        return Err(());
+    }
     while i < tokens.len() - 1 {
         let current = &tokens[i];
         // Pairs
@@ -65,13 +68,45 @@ pub fn parse(tokens: Vec<PositionedToken>) -> Result<AST, ()> {
         // Tables
         if let Token::Punctuation(p) = &current.token {
             if *p == '[' {
-                // Next should be identifier
-                if let Token::Ident(id) = &tokens[i + 1].token {
-                    let tks = capture_until(&tokens, &mut i, Token::Punctuation('['));
-                    i -= 1;
-                    let nds = parse(tks).unwrap();
-                    nodes.push(Node::Table(Table::new(id.into(), nds)));
+                // Next should be identifiers
+                let mut identifiers: Vec<String> = vec![];
+                for ident in capture_until(&tokens, &mut i, Token::Punctuation(']')) {
+                    if let Token::Ident(ident) = &ident.token {
+                        identifiers.push(ident.clone())
+                    } else if let Token::Punctuation(p) = &ident.token {
+                        if *p != '.' {
+                            return Err(());
+                        }
+                    } else {
+                        return Err(());
+                    }
                 }
+                // Capture until '[' followed by an ident, or EOF
+                let mut captured: Vec<PositionedToken> = vec![];
+                loop {
+                    i += 1;
+                    if i >= tokens.len() - 1 {
+                        break;
+                    }
+                    let current = &tokens[i];
+                    let next = &tokens[i + 1];
+                    if current.token == Token::Punctuation('[') {
+                        if let Token::Ident(_) = next.token {
+                            break;
+                        }
+                    }
+                    captured.push(current.clone())
+                }
+                i -= 1;
+                let len = identifiers.len();
+                let nds = parse(captured).unwrap_or(vec![]);
+                let mut table = Node::Table(Table::new(identifiers[len - 1].clone(), nds));
+                for i in 1..len {
+                    let ind = len - i - 1;
+                    let ident = &identifiers[ind];
+                    table = Node::Table(Table::new(ident.clone(), vec![table]))
+                }
+                nodes.push(table);
             }
         }
         i += 1;

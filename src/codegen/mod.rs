@@ -31,7 +31,7 @@ pub trait Codegen {
     }
     fn generate_node(&self, node: Node) -> String {
         match node {
-            Node::Lit(l) => self.generate_lit(&l),
+            Node::Lit(l) => format!("\"{}\"", self.generate_lit(&l)),
             Node::Pair(p) => self.generate_pair(p) + "\n",
             Node::Array(a) => self.generate_array(a) + "\n",
             Node::Table(t) => self.generate_table(t) + "\n",
