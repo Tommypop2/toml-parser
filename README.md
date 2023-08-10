@@ -1,3 +1,3 @@
-# Yet another TOML parser written in Rust
+# Yet another TOML parser written in Rust (v2)
 
-Likely terrible and slow
+Likely still terrible and slow (but maybe slightly better this time)
