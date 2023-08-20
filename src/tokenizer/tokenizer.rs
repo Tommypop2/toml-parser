@@ -1,6 +1,6 @@
 use super::{
     cursor::Cursor,
-    tokens::{Token, TokenKind},
+    tokens::{Span, Token, TokenKind, DUMMY_SP},
 };
 
 pub struct Tokenizer<'a> {
@@ -15,15 +15,13 @@ impl<'a> Tokenizer<'a> {
         }
     }
     pub fn next(&mut self) {
-        let start_ind = self.cursor.next_i;
         let c = self.cursor.next();
         match &self.state {
             TokenKind::Start => match c {
                 ' ' | '\n' | '\t' | '\r' => {}
-                'A'..='Z' | 'a'..='z' => {}
+                'A'..='Z' | 'a'..='z' => self.state = TokenKind::Ident,
                 _ => {}
             },
-            TokenKind::Ident(i) => {}
             _ => {}
         }
     }
