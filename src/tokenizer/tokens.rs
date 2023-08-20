@@ -1,3 +1,4 @@
+#[derive(Clone, Debug)]
 pub enum TokenKind {
     Start,
     End,
@@ -5,14 +6,17 @@ pub enum TokenKind {
     String,
     Invalid,
 }
+#[derive(Debug)]
 pub enum TokenValue {
     Ident(String),
     String(String),
 }
+#[derive(Debug)]
 pub enum Pos {
     DUMMY,
-    POS(u32),
+    POS(usize),
 }
+#[derive(Debug)]
 pub struct Span {
     pub start: Pos,
     pub end: Pos,
@@ -21,6 +25,7 @@ pub const DUMMY_SP: Span = Span {
     start: Pos::DUMMY,
     end: Pos::DUMMY,
 };
+#[derive(Debug)]
 pub struct Token {
     pub span: Span,
     pub kind: TokenKind,

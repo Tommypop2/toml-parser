@@ -1,22 +1,34 @@
-use std::str::Chars;
+use std::{iter::Peekable, str::Chars};
 
 /**
  * Peekable iteration over chars
  */
 pub struct Cursor<'a> {
-    pub next_i: usize,
-    pub chars: Chars<'a>,
+    started_iterating: bool,
+    pub pos: usize,
+    pub chars: Peekable<Chars<'a>>,
 }
 impl<'a> Cursor<'a> {
     pub fn new(chars: Chars<'a>) -> Self {
-        Self { next_i: 0, chars }
+        Self {
+            started_iterating: false,
+            pos: 0,
+            chars: chars.peekable(),
+        }
     }
-    pub fn next(&mut self) -> char {
-        let chr = self.peek();
-        self.next_i += 1;
+    pub fn peek(&mut self) -> Option<&char> {
+        self.chars.peek()
+    }
+}
+
+impl<'a> Iterator for Cursor<'a> {
+    type Item = char;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.started_iterating {
+            self.pos += 1;
+        }
+        let chr = self.chars.next();
+        self.started_iterating = true;
         chr
-    }
-    pub fn peek(&mut self) -> char {
-        self.chars.nth(self.next_i).unwrap()
     }
 }
