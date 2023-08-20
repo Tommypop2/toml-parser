@@ -1,14 +1,30 @@
-use super::{cursor::Cursor, tokens::Token};
+use super::{
+    cursor::Cursor,
+    tokens::{Token, TokenKind},
+};
 
 pub struct Tokenizer<'a> {
-    state: Token,
+    state: TokenKind,
     cursor: Cursor<'a>,
 }
 impl<'a> Tokenizer<'a> {
-    fn next(&mut self) {
-        match self.state {
-            Token::Ident => {}
-            Token::String => {}
+    pub fn new(cursor: Cursor<'a>) -> Self {
+        Self {
+            state: TokenKind::Start,
+            cursor,
+        }
+    }
+    pub fn next(&mut self) {
+        let start_ind = self.cursor.next_i;
+        let c = self.cursor.next();
+        match &self.state {
+            TokenKind::Start => match c {
+                ' ' | '\n' | '\t' | '\r' => {}
+                'A'..='Z' | 'a'..='z' => {}
+                _ => {}
+            },
+            TokenKind::Ident(i) => {}
+            _ => {}
         }
     }
 }
