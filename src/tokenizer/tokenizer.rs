@@ -30,24 +30,31 @@ impl<'a> Iterator for Tokenizer<'a> {
             value: None,
         };
         loop {
-            let c = match self.cursor.next() {
+            let c = match self.cursor.peek() {
                 Some(c) => c,
                 None => break,
             };
             match &self.state {
                 TokenKind::Start => match c {
-                    ' ' | '\n' | '\t' | '\r' => {}
+                    '\n' | '\t' | '\r' | ' ' => {
+                        self.cursor.next();
+                    }
                     'A'..='Z' | 'a'..='z' => {
                         result.kind = TokenKind::Ident;
-                        result.span.end = Pos::POS(self.cursor.pos)
+                        result.span.end = Pos::POS(self.cursor.pos);
+                        self.cursor.next();
                     }
-                    _ => {}
+                    _ => {
+                        self.cursor.next();
+                    }
                 },
                 TokenKind::Ident => match c {
                     'a'..='z' | 'A'..='Z' | '_' | '0'..='9' => {
-                        result.span.end = Pos::POS(self.cursor.pos);
+                        self.cursor.next();
                     }
-                    _ => break,
+                    _ => {
+                        break;
+                    }
                 },
 
                 _ => {}
@@ -55,6 +62,7 @@ impl<'a> Iterator for Tokenizer<'a> {
             self.state = result.kind.clone();
         }
         self.state = result.kind.clone();
+        result.span.end = Pos::POS(self.cursor.pos);
         Some(result)
     }
 }

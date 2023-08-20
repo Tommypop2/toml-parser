@@ -1,5 +1,7 @@
 #[derive(Clone, Debug)]
 pub enum TokenKind {
+    WhiteSpace,
+    LineBreak,
     Start,
     End,
     Ident,
