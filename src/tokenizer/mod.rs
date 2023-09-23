@@ -1,14 +1,12 @@
 use std::str::Chars;
 
-use self::{cursor::Cursor, tokenizer::Tokenizer};
+use self::{tokenizer::Tokenizer, tokens::State};
 
-pub mod cursor;
 pub mod tokenizer;
 pub mod tokens;
-
-pub fn tokenize(chrs: Chars) {
-    let cursor = Cursor::new(chrs);
-    let tokenizer = Tokenizer::new(cursor);
-    let collected = tokenizer.into_iter().collect::<Vec<_>>();
-    dbg!(collected);
+pub fn tokenize(chars: &mut Chars) {
+    let state = State::new();
+    let tokenizer = Tokenizer::new(state);
+    let res = tokenizer.tokenize(chars);
+    dbg!(res)
 }
