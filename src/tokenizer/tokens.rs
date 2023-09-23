@@ -1,28 +1,40 @@
+#[derive(Clone, Debug, PartialEq)]
+pub enum Lit {
+    Str,
+    Float,
+    Int,
+}
+#[derive(Clone, Debug, PartialEq)]
 pub enum TokenKind {
     Start,
     Comment,
+    Identifier,
     End,
+    Temp,
+    Lit(Lit),
+    // Single Char tokens
+    Equals,
+    Comma,
+    Dot,
+    OpenParen,
+    CloseParen,
+    OpenBrace,
+    CloseBrace,
+    OpenBracket,
+    CloseBracket,
 }
-pub enum TokenValue {
-    Comment(String),
-}
+// #[derive(Debug)]
+// pub enum TokenValue {
+//     Comment(String),
+// }
+pub type TokenValue = String;
+#[derive(Debug, Clone)]
 pub struct Token {
-    ind_kind: u32,
-    ind_value: u32,
+    pub kind: TokenKind,
+    pub ind_value: Option<usize>,
 }
-/**
- * The current tokenizer state
- * Stores the TokenKind, and TokenValue separately, so the enums can be as small as possible
- */
-pub struct State {
-    kinds: Vec<TokenKind>,
-    values: Vec<TokenValue>,
-}
-impl State {
-    pub fn new() -> Self {
-        Self {
-            kinds: vec![],
-            values: vec![],
-        }
+impl Token {
+    pub fn new(kind: TokenKind, ind_value: Option<usize>) -> Self {
+        Self { kind, ind_value }
     }
 }

@@ -1,12 +1,11 @@
 use std::str::Chars;
 
-use self::{tokenizer::Tokenizer, tokens::State};
+use self::tokenizer::Tokenizer;
 
 pub mod tokenizer;
 pub mod tokens;
-pub fn tokenize(chars: &mut Chars) {
-    let state = State::new();
-    let tokenizer = Tokenizer::new(state);
-    let res = tokenizer.tokenize(chars);
-    dbg!(res)
+pub fn tokenize(chars: &mut Chars) -> Tokenizer {
+    let mut tokenizer: Tokenizer = Tokenizer::new();
+    tokenizer.tokenize(chars);
+    tokenizer
 }
